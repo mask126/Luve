@@ -1,0 +1,350 @@
+@font-face {
+    font-family: 'Pink Mouse Script';
+    src: url('fonts/Pink Mouse Script RUS_0.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Improves loading behavior */
+}
+@font-face {
+    font-family: 'Candice';
+    src: url('fonts/Gogol Regular.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Improves loading behavior */
+}
+@font-face {
+    font-family: 'Mang';
+    src: url('fonts/Magnolia Script.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Improves loading behavior */
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Bahnschrift', sans-serif;
+    background-color: #eca6ff;
+    color: #f0f0f0;
+    line-height: 1.6;
+}
+header {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    background-color: #fbcfe8;
+    gap: 70%;
+}
+.navig {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 0 0;
+    margin: 0 50px;
+    gap: 59%;
+}
+nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+nav ul {
+    font-family: Mang;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 5%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+nav ul li a {
+    color: #b87193;
+    text-decoration: none;
+    font-size: 24px;
+    transition: 0.3s;
+    padding: 5px 15px;
+}
+nav ul li a:hover {
+    color: #763555;
+    transition: 0.7s;
+}
+.logo {
+    display: flex;
+    text-align: center;
+    justify-items: center;
+    align-items: center;
+}
+.logo a {
+    font-family: Mang;
+    text-decoration: none;
+    color: #b87193;
+}
+.logo a:hover {
+    color: #763555;
+    transition: 0.7s;
+}
+.logo h2 {
+    font-size: 26px;
+    white-space: nowrap;
+}
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(360deg, #ffb6c1, #ffdddc);
+    height: 85.6vh;
+    position: relative; 
+    overflow: hidden; 
+    flex-direction: column;
+}
+.timer-con {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 36px;
+    position: relative;
+    z-index: 1;
+}
+.timer-con h1 {
+    font-family: Mang;
+    color: #b87193;
+}
+.timer-con p {
+    font-family: Candice;
+    color: #b87193;
+}
+.timer {
+    font-size: 32px;
+    margin-top: 20px;
+    width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    text-align: center;
+}
+.timer span {
+    font-weight: bold;
+    font-size: 100px;
+    margin: 0 8px;
+    color: #b87193;
+}
+.text {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    gap: 10%;
+    transform: translateY(-30px);
+    color: #b87193;
+    font-family: Impact;
+}
+.text p {
+    font-family: Impact;
+    transform: translateX(-45px);
+}
+.Citat {
+    width: 50%;
+    line-height: 1.2;
+}
+
+.hearts {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; 
+    pointer-events: none; 
+}
+
+.heart {
+    position: absolute;
+    bottom: 0; 
+    width: 20px;
+    height: 20px;
+    background: #eda1c6;
+    transform: rotate(45deg);
+    animation: float linear forwards; 
+    opacity: 0.7;
+    z-index: 0;
+}
+.heart::before,
+.heart::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: #eda1c6;
+    border-radius: 50%;
+    position: absolute;
+}
+.heart::before {
+    top: -10px;
+    left: 0;
+}
+.heart::after {
+    left: -10px;
+    top: 0;
+}
+@keyframes float {
+    0% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-80vh) rotate(45deg); 
+        opacity: 0;
+    }
+}
+/* Small Tablets: 600px - 799px */
+@media (min-width: 600px) and (max-width: 799px) {
+    header {
+        height: auto;
+        flex-direction: column;
+        padding: 15px;
+    }
+    .navig {
+        flex-direction: column;
+        gap: 10px;
+        margin: 0;
+    }
+    nav ul {
+        flex-direction: row;
+        gap: 0.8rem;
+        justify-content: center;
+    }
+    nav ul li a {
+        font-size: 14px;
+        padding: 5px;
+    }
+    .logo h2 {
+        font-size: 16px;
+    }
+    .content {
+        min-height: 100vh;
+        padding: 10px;
+    }
+    .timer-con {
+        font-size: 20px;
+    }
+    .timer-con h1 {
+        font-size: 20px;
+    }
+    .timer {
+        width: 350px;
+    }
+    .timer span {
+        font-size: 50px;
+    }
+    .text {
+        gap: 4%;
+    }
+    .text p {
+        font-size: 10px;
+    }
+    .Citat {
+        width: 80%;
+        font-size: 12px;
+    }
+    .heart {
+        width: 12px;
+        height: 12px;
+    }
+    .heart::before,
+    .heart::after {
+        width: 12px;
+        height: 12px;
+    }
+    .heart::before {
+        top: -6px;
+    }
+    .heart::after {
+        left: -6px;
+    }
+}
+
+/* Mobile Devices: 320px - 599px */
+@media (min-width: 320px) and (max-width: 599px) {
+    body {
+        font-size: 14px;
+    }
+    header {
+        height: auto;
+        flex-direction: column;
+        padding: 10px;
+    }
+    .navig {
+        flex-direction: column;
+        gap: 5px;
+        align-items: center;
+        margin: 0;
+    }
+    nav ul {
+        flex-direction: row;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    nav ul li a {
+        font-size: 12px;
+        padding: 3px;
+    }
+    .logo h2 {
+        font-size: 14px;
+    }
+    .content {
+        min-height: 100vh;
+        padding: 10px;
+    }
+    .timer-con {
+        font-size: 18px;
+    }
+    .timer-con h1 {
+        font-size: 18px;
+    }
+    .timer {
+        width: 100%;
+        flex-direction: row;
+        gap: 5px;
+    }
+    .timer span {
+        font-size: 40px;
+    }
+    .text {
+        flex-direction: row;
+        gap: 3%;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .text p {
+        font-size: 8px;
+    }
+    .Citat {
+        width: 90%;
+        font-size: 10px;
+    }
+    .heart {
+        width: 10px;
+        height: 10px;
+    }
+    .heart::before,
+    .heart::after {
+        width: 10px;
+        height: 10px;
+    }
+    .heart::before {
+        top: -5px;
+    }
+    .heart::after {
+        left: -5px;
+    }
+}

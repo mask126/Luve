@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="sounds.css">
+    <title>Я тебя люблю</title>
+</head>
+<body>
+    <header>
+        <nav class="navig">
+            <div class="logo">
+                <a href="index.html">
+                    <h2>ВместеНавсегда</h2>
+                </a>
+            </div>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="gallery.html">Галерея</a></li>
+                <li><a href="sounds.html">Музыка</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="content">
+        <h1>Наш с тобой плейлист</h1>
+        <button class="add-button" onclick="toggleForm()">Добавить трек</button>
+        <div class="form-container" id="trackForm" style="display: none;">
+            <input type="text" id="trackUrl" placeholder="Сюда нада ссылочку на трек">
+            <button class="submit-button" onclick="addTrack()">Добавить</button>
+        </div>
+        <div class="player-container" id="trackList"></div>
+        <div class="hearts" id="hearts-container"></div>
+    </div>
+    <script>
+        let intervalId = null;
+
+        function startHearts() {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+
+            intervalId = setInterval(() => {
+                const heartsContainer = document.getElementById('hearts-container');
+                
+                for (let i = 0; i < 5; i++) {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.style.left = `${-10 + Math.random() * 120}%`;
+                    heart.style.animationDuration = `${4 + Math.random() * 2}s`; 
+                    heartsContainer.appendChild(heart);
+                    setTimeout(() => heart.remove(), 7000);
+                } 
+            }, 300);
+        }
+
+        startHearts();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTracks = JSON.parse(localStorage.getItem('tracks')) || [];
+            savedTracks.forEach((track, index) => addTrackDOM(track, index));
+        });
+
+        function toggleForm() {
+            const form = document.getElementById('trackForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function addTrack() {
+            const trackUrl = document.getElementById('trackUrl').value.trim();
+
+            if (!trackUrl) {
+                alert('Пожалуйста, вставьте URL трека.');
+                return;
+            }
+
+            let trackId, iframeUrl;
+
+            // Check if the URL is from Yandex Music
+            if (trackUrl.includes('music.yandex.ru')) {
+                const trackIdMatch = trackUrl.match(/track\/(\d+)/);
+                if (!trackIdMatch) {
+                    alert('Пожалуйста, вставьте корректный URL трека с Яндекс Музыки (например, https://music.yandex.ru/track/123456).');
+                    return;
+                }
+                trackId = trackIdMatch[1];
+                iframeUrl = `https://music.yandex.ru/iframe/track/${trackId}/`;
+            }
+            // Check if the URL is from Spotify
+            else if (trackUrl.includes('open.spotify.com')) {
+                const trackIdMatch = trackUrl.match(/track\/([0-9a-zA-Z]+)/);
+                if (!trackIdMatch) {
+                    alert('Пожалуйста, вставьте корректный URL трека с Spotify (например, https://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6).');
+                    return;
+                }
+                trackId = trackIdMatch[1];
+                iframeUrl = `https://open.spotify.com/embed/track/${trackId}`;
+            }
+            else {
+                alert('Пожалуйста, вставьте URL трека с Яндекс Музыки или Spotify.');
+                return;
+            }
+
+            const track = { iframeUrl: iframeUrl };
+
+            // Save to localStorage
+            let savedTracks = [];
+            try {
+                savedTracks = JSON.parse(localStorage.getItem('tracks')) || [];
+            } catch (e) {
+                console.error('Error parsing tracks from localStorage:', e);
+                alert('Произошла ошибка при загрузке треков. Пожалуйста, попробуйте снова.');
+                return;
+            }
+            savedTracks.push(track);
+            localStorage.setItem('tracks', JSON.stringify(savedTracks));
+
+            // Add to DOM
+            addTrackDOM(track, savedTracks.length - 1);
+
+            // Clear form and hide
+            document.getElementById('trackUrl').value = '';
+            toggleForm();
+        }
+
+        function addTrackDOM(track, index) {
+            const trackList = document.getElementById('trackList');
+            const trackItem = document.createElement('div');
+            trackItem.className = 'track-item';
+            trackItem.dataset.index = index; // Store index for reliable deletion
+
+            const iframe = document.createElement('iframe');
+            iframe.src = track.iframeUrl;
+            iframe.setAttribute('frameborder', '0');
+            iframe.setAttribute('allowtransparency', 'true');
+            iframe.setAttribute('allow', 'encrypted-media');
+            iframe.onerror = () => {
+                alert('Ошибка загрузки трека. Проверьте URL и попробуйте снова.');
+                trackItem.remove();
+            };
+            trackItem.appendChild(iframe);
+
+            // Add delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-button';
+            deleteButton.textContent = 'Удалить';
+            deleteButton.onclick = () => deleteTrack(parseInt(trackItem.dataset.index));
+            trackItem.appendChild(deleteButton);
+
+            trackList.appendChild(trackItem);
+        }
+
+        function deleteTrack(index) {
+            let savedTracks = [];
+            try {
+                savedTracks = JSON.parse(localStorage.getItem('tracks')) || [];
+            } catch (e) {
+                console.error('Error parsing tracks from localStorage:', e);
+                alert('Произошла ошибка при удалении трека. Пожалуйста, попробуйте снова.');
+                return;
+            }
+
+            if (index >= 0 && index < savedTracks.length) {
+                savedTracks.splice(index, 1);
+                localStorage.setItem('tracks', JSON.stringify(savedTracks));
+
+                // Refresh track list
+                const trackList = document.getElementById('trackList');
+                trackList.innerHTML = '';
+                savedTracks.forEach((track, i) => addTrackDOM(track, i));
+            } else {
+                console.warn('Invalid track index:', index);
+            }
+        }
+    </script>
+</html>

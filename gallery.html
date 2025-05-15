@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="gallery.css">
+    <title>Я тебя люблю</title>
+</head>
+<body>
+    <header>
+        <nav class="navig">
+            <div class="logo">
+                <a href="index.html">
+                    <h2>ВместеНавсегда</h2>
+                </a>
+            </div>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="gallery.html">Галерея</a></li>
+                <li><a href="sounds.html">Музыка</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="gallery-section" id="gallery">
+        <h1>Немножко фоточек вредины (ну и family тоже)</h1>
+        <div class="upload-section">
+            <label for="image-upload" class="upload-button">Добавить фото</label>
+            <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+        </div>
+        <div class="gallery-grid">
+           
+        </div>
+        <div class="hearts" id="hearts-container"></div>
+    </section>
+    <div class="modal" id="modal">
+        <span class="close" id="close">x</span>
+        <span class="prev" id="prev">❮</span>
+        <span class="next" id="next">❯</span>
+        <img class="modal-content" id="modal-img">
+    </div>
+    <script>
+       let intervalId = null;
+
+function startHearts() {
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+    }
+
+    intervalId = setInterval(() => {
+        const heartsContainer = document.getElementById('hearts-container');
+        
+        for (let i = 0; i < 5; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = `${-10 + Math.random() * 120}%`; 
+            heart.style.animationDuration = `${4 + Math.random() * 2}s`; 
+            heartsContainer.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }
+    }, 300);
+}
+startHearts();
+
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modal-img');
+        const close = document.getElementById('close');
+        const prev = document.getElementById('prev');
+        const next = document.getElementById('next');
+        const galleryGrid = document.querySelector('.gallery-grid');
+        const imageUpload = document.getElementById('image-upload');
+        let images = [];
+
+        // Function to update modal images
+        function updateModalImages() {
+            images = document.querySelectorAll('.gallery-item img');
+        }
+
+        // Function to save images to localStorage
+        function saveImagesToStorage() {
+            const imageSrcs = Array.from(images).map(img => img.src);
+            localStorage.setItem('galleryImages', JSON.stringify(imageSrcs));
+        }
+
+        // Function to add image to gallery
+        function addImageToGallery(imgSrc) {
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item';
+            
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = 'Uploaded Image';
+            
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-button';
+            deleteButton.textContent = 'Удалить';
+            deleteButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering modal
+                galleryItem.remove();
+                updateModalImages();
+                saveImagesToStorage(); // Update localStorage after deletion
+                if (modal.style.display === 'flex' && modalImg.src === imgSrc) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            galleryItem.appendChild(img);
+            galleryItem.appendChild(deleteButton);
+            galleryGrid.appendChild(galleryItem);
+
+            // Add click event for modal
+            img.addEventListener('click', () => {
+                modal.style.display = 'flex';
+                modalImg.src = img.src;
+                modalImg.alt = img.alt;
+                updateModalImages();
+                currentIndex = Array.from(images).indexOf(img);
+            });
+
+            updateModalImages();
+            saveImagesToStorage(); // Save to localStorage after adding
+        }
+
+        // Load images from localStorage on page load
+        function loadImagesFromStorage() {
+            const savedImages = localStorage.getItem('galleryImages');
+            if (savedImages) {
+                const imageSrcs = JSON.parse(savedImages);
+                imageSrcs.forEach(imgSrc => addImageToGallery(imgSrc));
+            }
+        }
+
+        // Handle image upload
+        imageUpload.addEventListener('change', (event) => {
+            const files = event.target.files;
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    addImageToGallery(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+            event.target.value = ''; // Clear input
+        });
+
+        // Load saved images when the page loads
+        window.addEventListener('load', loadImagesFromStorage);
+
+        let currentIndex = 0;
+
+        // Modal navigation
+        close.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        prev.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            modalImg.src = images[currentIndex].src;
+            modalImg.alt = images[currentIndex].alt;
+        });
+
+        next.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % images.length;
+            modalImg.src = images[currentIndex].src;
+            modalImg.alt = images[currentIndex].alt;
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
